@@ -125,7 +125,7 @@ const transfer: STF<UTXORollup, TransferInput> = {
     state.utxos.push(newUTXO);
     outputUTXOs.push(newUTXO.id);
 
-    console.log(requiredInputUTXTotal);
+    // console.log(requiredInputUTXTotal);
 
     if (requiredInputUTXTotal > amount) {
       const newUTXO: UTXO = {
@@ -159,8 +159,8 @@ const transfer: STF<UTXORollup, TransferInput> = {
       totalBalanceAfter += utxo.value;
     });
 
-    console.log(totalBalanceBefore);
-    console.log(totalBalanceAfter);
+    // console.log(totalBalanceBefore);
+    // console.log(totalBalanceAfter);
 
     // check if the sender has reduced balance for sending the money
     if (totalBalanceBefore - totalBalanceAfter != amount) {
