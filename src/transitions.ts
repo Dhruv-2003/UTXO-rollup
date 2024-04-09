@@ -38,6 +38,7 @@ type TransferInput = {
 };
 
 // --------- State Transition Handlers ---------
+
 const create: STF<UTXORollup, CreateInput> = {
   handler: ({ inputs, state, msgSender }) => {
     const { address, amount, timestamp } = inputs;
@@ -93,7 +94,8 @@ const transfer: STF<UTXORollup, TransferInput> = {
     const newTxId = findNewTXId(state);
 
     // find the input UTXOs
-    // For now , just select the first n UTXOs that totals upto an amount bigger or equal to the amount of the transaction needed
+    // For now , just select the first n UTXOs that totals upto an amount bigger
+    // or equal to the amount of the transaction needed
     let inputUTXOs: number[] = [];
     let requiredInputUTXTotal = 0;
 
@@ -150,7 +152,6 @@ const transfer: STF<UTXORollup, TransferInput> = {
     state.transactions.push(newTx);
 
     // check if the new updated state has indeed transferred the said amount
-
     const fromUserAfterUTXOs = findUTXOforAddress(state, from);
 
     // calculate total Balance for this user
@@ -159,15 +160,12 @@ const transfer: STF<UTXORollup, TransferInput> = {
       totalBalanceAfter += utxo.value;
     });
 
-    // console.log(totalBalanceBefore);
-    // console.log(totalBalanceAfter);
-
     // check if the sender has reduced balance for sending the money
     if (totalBalanceBefore - totalBalanceAfter != amount) {
       throw new Error("Invalid Balance");
     }
 
-    // check if the input and output UTXOs , nullify each other
+    // TODO: check if the input and output UTXOs , nullify each other
 
     return state;
   },

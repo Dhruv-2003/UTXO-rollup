@@ -8,8 +8,6 @@ export const createUTXO = new ActionSchema("createUTXO", {
 });
 
 // 2. Perform a Tx , which would take in the amount to send from 1 account to another,
-// It's job is to calculate the input UTXOs
-// Create new UTXOs against it
 export const transfer = new ActionSchema("transfer", {
   to: SolidityType.ADDRESS,
   from: SolidityType.ADDRESS,
