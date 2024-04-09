@@ -4,13 +4,13 @@ import { ActionEvents } from "@stackr/sdk";
 import { Playground } from "@stackr/sdk/plugins";
 import dotenv from "dotenv";
 import { schemas } from "./actions.ts";
-import { ERC20Machine, mru } from "./utxo.ts";
+import { UTXOMachine, mru } from "./utxo.ts";
 import { transitions } from "./transitions.ts";
 
 console.log("Starting server...");
 dotenv.config();
 
-const erc20Machine = mru.stateMachines.get<ERC20Machine>("erc-20");
+const utxoMachine = mru.stateMachines.get<UTXOMachine>("utxo");
 
 const app = express();
 app.use(express.json());
@@ -79,9 +79,41 @@ app.post("/:reducerName", async (req: Request, res: Response) => {
 });
 
 app.get("/", (_req: Request, res: Response) => {
-  return res.send({ state: erc20Machine?.state });
+  return res.send({ state: utxoMachine?.state });
 });
 
-app.listen(3000, () => {
-  console.log("listening on port 3000");
+app.get("/balance/:address", (_req: Request, res: Response) => {
+  const { address } = _req.params;
+  const currentState = utxoMachine?.state;
+  if (!currentState) {
+    res.status(400).send({ message: "No State found" });
+    return;
+  }
+  const totalUTXOsforAddress = currentState.utxos.filter(
+    (utxo) => utxo.address == address
+  );
+
+  let totalBalance = 0;
+  totalUTXOsforAddress.forEach((utxo) => {
+    totalBalance += utxo.value;
+  });
+
+  return res.send({ address: address, balance: totalBalance });
+});
+
+app.get("/utxos/:address", (_req: Request, res: Response) => {
+  const { address } = _req.params;
+  const currentState = utxoMachine?.state;
+  if (!currentState) {
+    res.status(400).send({ message: "No State found" });
+    return;
+  }
+  const totalUTXOsforAddress = currentState.utxos.filter(
+    (utxo) => utxo.address == address
+  );
+  return res.send({ address: address, utxos: totalUTXOsforAddress });
+});
+
+app.listen(5050, () => {
+  console.log("listening on port 5050");
 });

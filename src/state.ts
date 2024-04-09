@@ -38,7 +38,7 @@ export class UTXOStateTransport {
   createTree(leaves: UTXO[]) {
     const hashedLeaves = leaves.map((leaf) => {
       return solidityPackedKeccak256(
-        ["string", "uint256", "address", "string"],
+        ["uint256", "uint256", "address", "uint256"],
         [leaf.id, leaf.value, leaf.address, leaf.txID]
       );
     });

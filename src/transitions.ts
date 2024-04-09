@@ -102,6 +102,7 @@ const transfer: STF<UTXORollup, TransferInput> = {
       i < fromUserUTXOs.length && requiredInputUTXTotal < amount;
       i++
     ) {
+      requiredInputUTXTotal += fromUserUTXOs[i].value;
       inputUTXOs.push(fromUserUTXOs[i].id);
     }
 
@@ -122,8 +123,9 @@ const transfer: STF<UTXORollup, TransferInput> = {
       txID: newTxId,
     };
     state.utxos.push(newUTXO);
-
     outputUTXOs.push(newUTXO.id);
+
+    console.log(requiredInputUTXTotal);
 
     if (requiredInputUTXTotal > amount) {
       const newUTXO: UTXO = {
@@ -132,6 +134,7 @@ const transfer: STF<UTXORollup, TransferInput> = {
         value: requiredInputUTXTotal - amount,
         txID: newTxId,
       };
+      // console.log(newUTXO);
       state.utxos.push(newUTXO);
       outputUTXOs.push(newUTXO.id);
     }
@@ -156,10 +159,15 @@ const transfer: STF<UTXORollup, TransferInput> = {
       totalBalanceAfter += utxo.value;
     });
 
+    console.log(totalBalanceBefore);
+    console.log(totalBalanceAfter);
+
     // check if the sender has reduced balance for sending the money
-    if (totalBalanceBefore - totalBalanceAfter == inputs.amount) {
+    if (totalBalanceBefore - totalBalanceAfter != amount) {
       throw new Error("Invalid Balance");
     }
+
+    // check if the input and output UTXOs , nullify each other
 
     return state;
   },
