@@ -4,7 +4,7 @@ import { ActionEvents } from "@stackr/sdk";
 import { Playground } from "@stackr/sdk/plugins";
 import dotenv from "dotenv";
 import { schemas } from "./actions.ts";
-import { ERC20Machine, mru } from "./erc20.ts";
+import { ERC20Machine, mru } from "./utxo.ts";
 import { transitions } from "./transitions.ts";
 
 console.log("Starting server...");
@@ -77,7 +77,6 @@ app.post("/:reducerName", async (req: Request, res: Response) => {
   }
   return;
 });
-
 
 app.get("/", (_req: Request, res: Response) => {
   return res.send({ state: erc20Machine?.state });

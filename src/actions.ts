@@ -1,26 +1,23 @@
 import { ActionSchema, SolidityType } from "@stackr/sdk";
 
-// utility function to create a transfer schema
-function generateSchemaFromBase(name: string) {
-  return new ActionSchema(name, {
-    to: SolidityType.ADDRESS,
-    from: SolidityType.ADDRESS,
-    amount: SolidityType.UINT,
-  });
-}
-
-// createAccountSchema is a schema for creating an account
-export const createAccountSchema = new ActionSchema("createAccount", {
+// 1. mint a new UTXO , origination of the first UTXO , similar to like minting of BTC in case of mining
+export const createUTXO = new ActionSchema("createUTXO", {
   address: SolidityType.ADDRESS,
+  amount: SolidityType.UINT,
+  timestamp: SolidityType.UINT,
 });
 
-// transferSchema is a collection of all the transfer actions
-// that can be performed on the rollup
+// 2. Perform a Tx , which would take in the amount to send from 1 account to another,
+// It's job is to calculate the input UTXOs
+// Create new UTXOs against it
+export const transfer = new ActionSchema("transfer", {
+  to: SolidityType.ADDRESS,
+  from: SolidityType.ADDRESS,
+  amount: SolidityType.UINT,
+  timestamp: SolidityType.UINT,
+});
+
 export const schemas = {
-  create: createAccountSchema,
-  transfer: generateSchemaFromBase("transfer"),
-  transferFrom: generateSchemaFromBase("transferFrom"),
-  mint: generateSchemaFromBase("mint"),
-  burn: generateSchemaFromBase("burn"),
-  approve: generateSchemaFromBase("approve"),
+  create: createUTXO,
+  transfer: transfer,
 };

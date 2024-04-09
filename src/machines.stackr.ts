@@ -1,17 +1,17 @@
 import { StateMachine } from "@stackr/sdk/machine";
 import genesisState from "../genesis-state.json";
 import { transitions } from "./transitions";
-import { ERC20 } from "./state";
+import { UTXORollup } from "./state";
 
 const STATE_MACHINES = {
-  ERC20: "erc-20",
+  UTXORollup: "utxo",
 };
 
-const erc20StateMachine = new StateMachine({
-  id: STATE_MACHINES.ERC20,
-  stateClass: ERC20,
+const utxoStateMachine = new StateMachine({
+  id: STATE_MACHINES.UTXORollup,
+  stateClass: UTXORollup,
   initialState: genesisState.state,
   on: transitions,
 });
 
-export { STATE_MACHINES, erc20StateMachine };
+export { STATE_MACHINES, utxoStateMachine };

@@ -2,43 +2,37 @@ import { State } from "@stackr/sdk/machine";
 import { BytesLike, ZeroHash, solidityPackedKeccak256 } from "ethers";
 import { MerkleTree } from "merkletreejs";
 
-export type Leaves = {
-  address: string;
-  balance: number;
-  nonce: number;
-  allowances: {
-    address: string;
-    amount: number;
-  }[];
-}[];
-
 export type UTXO = {
-  id: string; // some sort of UTXO Id
+  id: number; // some sort of UTXO Id
   value: number; // amount of this UTXO , which doesn't change once created
   address: string; // Address which the UTXO is tied to currently
-  txID: string; // transaction Id that created the UTXO
+  txID: number; // transaction Id that created the UTXO
 };
 
 export type transaction = {
-  inputUTXOs: string[];
-  outputUTXOs: string[];
+  id: number;
+  inputUTXOs: number[];
+  outputUTXOs: number[];
   timestamp: number;
 };
 
 export type UTXOStateType = {
   utxos: UTXO[];
   transactions: transaction[];
+  owner: string;
 };
 
 export class UTXOStateTransport {
   public merkleTreeUTXO: MerkleTree;
   public utxos: UTXO[];
   public transactions: transaction[];
+  public owner: string;
 
   constructor(leaves: UTXOStateType) {
     this.merkleTreeUTXO = this.createTree(leaves.utxos);
     this.utxos = leaves.utxos;
     this.transactions = leaves.transactions;
+    this.owner = leaves.owner;
   }
 
   createTree(leaves: UTXO[]) {
@@ -52,7 +46,7 @@ export class UTXOStateTransport {
   }
 }
 
-export class ERC20 extends State<UTXOStateType, UTXOStateTransport> {
+export class UTXORollup extends State<UTXOStateType, UTXOStateTransport> {
   constructor(state: UTXOStateType) {
     super(state);
   }
@@ -66,6 +60,7 @@ export class ERC20 extends State<UTXOStateType, UTXOStateTransport> {
         return {
           utxos: wrappedState.utxos,
           transactions: wrappedState.transactions,
+          owner: wrappedState.owner,
         };
       },
     };
